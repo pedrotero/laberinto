@@ -4,16 +4,30 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    public Transform t;
+    public int x;
+    public int y;
     // Start is called before the first frame update
     void Start()
     {
-        t = GetComponent<Transform>();
+
     }
 
     // Update is called once per frame
     void Update()
     {
         
+    }
+
+    public void setPos(int x1, int y1)
+    {
+        
+        x = x1;
+        y = y1;
+        GetComponent<Transform>().position = new Vector3(x, y);
+    }
+
+    Tile getCurrentTile()
+    {
+        return GameManager.gm.GetNode(x, y);
     }
 }

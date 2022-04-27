@@ -5,11 +5,11 @@ using UnityEngine;
 
 // ref: https://www.youtube.com/watch?v=alU04hvz6L4&t=1065s
 
-public class PathManager : MonoBehaviour
+public class Pathfinder : MonoBehaviour
 {
     private const int MOVE_STRAIGHT_COST = 10;
     private const int MOVE_DIAGONAL_COST = 14;
-    public static PathManager Instance;
+    public static Pathfinder Instance;
     private List<Tile> openList;
     private List<Tile> closedList;
 
@@ -20,7 +20,7 @@ public class PathManager : MonoBehaviour
     }
 
 
-    public List<Tile> FindPath(Grid grid, int startx, int starty, int endx, int endy)
+    public List<Tile> FindPath(int startx, int starty, int endx, int endy)
     {
         Tile startTile = GameManager.gm.GetNode(startx,starty);
         Tile endTile = GameManager.gm.GetNode(endx, endy);
@@ -61,7 +61,7 @@ public class PathManager : MonoBehaviour
             foreach (Tile neighbourNode in GetNeighbourList(currentNode))
             {
                 if (closedList.Contains(neighbourNode)) continue;
-                if (!neighbourNode.isWalkable)
+                if (neighbourNode.solid)
                 {
                     closedList.Add(neighbourNode);
                     continue;
@@ -101,7 +101,6 @@ public class PathManager : MonoBehaviour
 
         foreach (Tile c in path)
         {
-            c.SetColor(Color.green);
             Debug.Log(c.ToString());
         }
         return path;
@@ -110,36 +109,21 @@ public class PathManager : MonoBehaviour
     private List<Tile> GetNeighbourList(Tile currentNode)
     {
         List<Tile> neighbourList = new List<Tile>();
-
-        if (currentNode.x - 1 >= 0)
-        {
-            // Left
-            neighbourList.Add(GetNode(currentNode.x - 1, currentNode.y));
-            // Left Down
-            if (currentNode.y - 1 >= 0) neighbourList.Add(GetNode(currentNode.x - 1, currentNode.y - 1));
-            // Left Up
-            if (currentNode.y + 1 < grid.GetHeight()) neighbourList.Add(GetNode(currentNode.x - 1, currentNode.y + 1));
-        }
-        if (currentNode.x + 1 < grid.GetWidth())
-        {
-            // Right
-            neighbourList.Add(GetNode(currentNode.x + 1, currentNode.y));
-            // Right Down
-            if (currentNode.y - 1 >= 0) neighbourList.Add(GetNode(currentNode.x + 1, currentNode.y - 1));
-            // Right Up
-            if (currentNode.y + 1 < grid.GetHeight()) neighbourList.Add(GetNode(currentNode.x + 1, currentNode.y + 1));
-        }
+        //left
+        if (currentNode.x - 1 >= 0) neighbourList.Add(GetNode(currentNode.x - 1, currentNode.y));
+        //right
+        if (currentNode.x + 1 < GameManager.gm.n) neighbourList.Add(GetNode(currentNode.x + 1, currentNode.y));
         // Down
         if (currentNode.y - 1 >= 0) neighbourList.Add(GetNode(currentNode.x, currentNode.y - 1));
         // Up
-        if (currentNode.y + 1 < grid.GetHeight()) neighbourList.Add(GetNode(currentNode.x, currentNode.y + 1));
+        if (currentNode.y + 1 < GameManager.gm.n) neighbourList.Add(GetNode(currentNode.x, currentNode.y + 1));
 
         return neighbourList;
     }
 
     public Tile GetNode(int x, int y)
     {
-        return grid.GetGridObject(x, y);
+        return GameManager.gm.GetNode(x,y);
     }
 
     private int CalculateDistanceCost(Tile a, Tile b)
