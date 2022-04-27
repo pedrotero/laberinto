@@ -9,11 +9,18 @@ public class Tile : MonoBehaviour
     public Tile pastTile;
     public int x;
     public int y;
+    public Vector2 pos;
     // Start is called before the first frame update
+
+    private void Awake()
+    {
+        x = (int)GetComponent<Transform>().position.x;
+        y = (int)GetComponent<Transform>().position.y;
+        pos = GetComponent<Transform>().position;
+    }
     void Start()
     {
-        x = (int) GetComponent<Transform>().position.x;
-        y = (int)GetComponent<Transform>().position.y;
+        
     }
 
     // Update is called once per frame

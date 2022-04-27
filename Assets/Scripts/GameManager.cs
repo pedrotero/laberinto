@@ -16,12 +16,18 @@ public class GameManager : MonoBehaviour
     public KeyCode down;
     public KeyCode right;
     public Player p;
+    private Tile startTile;
+    private Tile endTile;
     private const int MOVE_COST = 10;
     private List<Tile> openList;
     private List<Tile> closedList;
-    // Start is called before the first frame update
-    void Start()
+    private Random r = new Random();
+
+    private void Awake()
     {
+        var center = new Vector2((float)n / 2 - 0.5f, (float)n / 2 - 0.5f);
+        Camera.main.transform.position = new Vector3(center.x, center.y, -5);
+
         n = 10;
         tiles = new Tile[n, n];
         gm = this;
@@ -33,19 +39,32 @@ public class GameManager : MonoBehaviour
                 tiles[i, j] = Instantiate(tilePrefab, new Vector3(i, j, 1), Quaternion.identity);
             }
         }
-        var center = new Vector2((float)n / 2 - 0.5f, (float)n / 2 - 0.5f);
-        Camera.main.transform.position = new Vector3(center.x, center.y, -5);
+        startTile = GetTile(new Vector2(r.Next(), r.Next()));
+        Debug.Log(startTile);
 
+        endTile = GetTile(new Vector2(r.Next(), r.Next()));
+        while (endTile != startTile)
+        {
+            endTile = GetTile(new Vector2(r.Next(), r.Next()));
+        }
+    }
+    // Start is called before the first frame update
+    void Start()
+    {
+        Debug.Log(p.t.position);
+        Debug.Log(startTile.pos);
+
+        p.t.position = startTile.pos;
         int c = m;
         int g = 4*m;
-        while (c>0 && g>0)
+        while (g>0)
         {
             canEnd();
-            Random r = new Random();
+            
             int x = r.Next(0,n);
             int y = r.Next(0,n);
             Vector2 vtest = new Vector2(x, y);
-            if (!tiles[x,y].solid && vtest != Vector2.zero && vtest != Vector2.one*n)
+            if (IsOcc(vtest))
             {
                 tiles[x, y].solid = true;
                 if (canEnd())
@@ -58,6 +77,10 @@ public class GameManager : MonoBehaviour
                     tiles[x, y].solid = false;
                 }
                 g--;
+            }
+            if (c==0)
+            {
+                g = 0;
             }
 
         }
@@ -83,14 +106,12 @@ public class GameManager : MonoBehaviour
         {
             nextPos = p.t.position + (Vector3)Vector2.right;
         }
-        bool w = walkable(nextPos);
-        p.t.position = w ? (Vector3)nextPos : p.t.position;
+        //bool w = !getTile(nextPos).solid;
+        //p.t.position = w ? (Vector3)nextPos : p.t.position;
     }
 
     public bool canEnd()
     {
-        Tile startTile = tiles[0, 0];
-        Tile endTile = tiles[n-1, n-1];
 
         openList = new List<Tile> { startTile };
         closedList = new List<Tile>();
@@ -110,9 +131,11 @@ public class GameManager : MonoBehaviour
         startTile.gCost = 0;
         startTile.hCost = CalculateDistanceCost(startTile, endTile);
         startTile.CalculateFCost();
+        Debug.Log(openList.Count);
 
         while (openList.Count > 0)
         {
+            Debug.Log(openList.Count);
             Tile currentNode = GetLowestFCostNode(openList);
             if (currentNode == endTile)
             {
@@ -190,19 +213,28 @@ public class GameManager : MonoBehaviour
         return lowestFCostNode;
     }
 
-
-    bool walkable(Vector2 pos)
+     public Tile GetTile(Vector2 pos)
     {
         int x = (int)Math.Floor(pos.x);
         int y = (int)Math.Floor(pos.y);
-        if (x > 0 && x < n && y > 0 && y < n)
+        if (x >= 0 && x < n && y >= 0 && y < n)
         {
-            return !tiles[x, y].solid;
+            return tiles[x, y];
         }
         else
         {
+            return null;
+        }
+    }
+
+    public bool IsOcc(Vector2 pos)
+    {
+        Tile t = GetTile(pos);
+        if (t != startTile && t != endTile && !t.solid)
+        {
             return false;
         }
+        return true;
     }
 
 }
