@@ -2,32 +2,26 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+// ref: https://drive.google.com/file/d/1WiF2LwM-6WvEnas9vw32YrYPly9K0Qrv/view
+
 public class Player : MonoBehaviour
 {
-    public int x;
-    public int y;
-    // Start is called before the first frame update
-    void Start()
+    public Cell CurrentCell;
+
+    public delegate void Move();
+    public static event Move OnMove;
+    private void Awake()
     {
 
     }
-
-    // Update is called once per frame
-    void Update()
+    public void ChangeCell(Cell c)
     {
         
-    }
-
-    public void setPos(int x1, int y1)
-    {
-        
-        x = x1;
-        y = y1;
-        GetComponent<Transform>().position = new Vector3(x, y);
-    }
-
-    Tile getCurrentTile()
-    {
-        return GameManager.gm.GetNode(x, y);
+        CurrentCell = c;
+        GetComponent<Transform>().position = new Vector2(c.x,c.y);
+        if (OnMove != null)
+        {
+            OnMove();
+        }
     }
 }
