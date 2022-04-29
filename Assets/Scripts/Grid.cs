@@ -36,7 +36,7 @@ public class Grid : ScriptableObject
         {
             for (int j = 0; j < height; j++)
             {
-                var p = new Vector2(i, j) * cellSize;
+                var p = new Vector3(i, j, 5);
                 cell = Instantiate(cellPrefab, p, Quaternion.identity);
                 cell.Init(this, (int)p.x, (int)p.y, true);
                 cell.SetColor(Color.blue);

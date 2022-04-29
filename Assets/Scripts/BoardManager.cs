@@ -39,6 +39,19 @@ public class BoardManager : MonoBehaviour
             grid.endCell = grid.GetGridObject(Random.Range(0, n), Random.Range(0, n));
         }
         grid.endCell.SetColor(Color.yellow);
+        while (enemycount > 0)
+        {
+            Cell c = grid.GetGridObject(Random.Range(0, n), Random.Range(0, n));
+            Debug.Log("Hello World");
+
+            if (grid.IsEmpty(c.x, c.y))
+            {
+                Enemy e = Instantiate(EnemyPrefab, new Vector3(n, n, -1), Quaternion.identity);
+                e.ChangeCell(c);
+                enemies.Add(e);
+                enemycount--;
+            }
+        }
         while (m>0)
         {
             Cell c = grid.GetGridObject(Random.Range(0, n), Random.Range(0, n));
@@ -53,17 +66,6 @@ public class BoardManager : MonoBehaviour
                 {
                     m--;
                 }
-            }
-        }
-
-        while (enemycount > 0)
-        {
-            Cell c = grid.GetGridObject(Random.Range(0, n), Random.Range(0, n));
-            if (grid.IsEmpty(c.x,c.y))
-            {
-                Enemy e = Instantiate(EnemyPrefab, new Vector2(n, n), Quaternion.identity);
-                e.ChangeCell(c);
-                enemycount--;
             }
         }
     }
