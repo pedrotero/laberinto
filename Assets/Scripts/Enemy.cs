@@ -40,7 +40,7 @@ public class Enemy : MonoBehaviour
     {
         Cell c = BoardManager.Instance.player.CurrentCell;
         List<Cell> clist = BoardManager.Instance.pf.FindPath(BoardManager.Instance.grid, CurrentCell.x, CurrentCell.y, c.x, c.y);
-        if (clist != null)
+        if (clist != null && clist.Count > 1)
         {
             ChangeCell(clist[1]);
         }

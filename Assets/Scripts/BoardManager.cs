@@ -1,6 +1,10 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
+using Random = UnityEngine.Random;
 
 public class BoardManager : MonoBehaviour
 {
@@ -19,15 +23,22 @@ public class BoardManager : MonoBehaviour
     public PathManager pf;
     public List<Enemy> enemies = new List<Enemy>();
     public int enemycount;
-    
+    private bool timerBool;
+    public float tiempoTrans;
+    private TimeSpan tiempoCrono;
+    public Text Crono;
 
     private void Awake()
     {
         Instance = this;
+        //n = PlayerPrefs.GetInt("n");
+        //m = PlayerPrefs.GetInt("m");
+        
     }
 
     private void Start()
     {
+        //Crono.text = "tiempo 00:00:00";
         grid = new Grid(10, 10, 1, CellPrefab);
 
         player = Instantiate(PlayerPrefab, new Vector2(0, 0), Quaternion.identity);
@@ -39,7 +50,8 @@ public class BoardManager : MonoBehaviour
             grid.endCell = grid.GetGridObject(Random.Range(0, n), Random.Range(0, n));
         }
         grid.endCell.SetColor(Color.yellow);
-        while (enemycount > 0)
+        int en = enemycount;
+        while (en > 0)
         {
             Cell c = grid.GetGridObject(Random.Range(0, n), Random.Range(0, n));
             Debug.Log("Hello World");
@@ -49,7 +61,7 @@ public class BoardManager : MonoBehaviour
                 Enemy e = Instantiate(EnemyPrefab, new Vector3(n, n, -1), Quaternion.identity);
                 e.ChangeCell(c);
                 enemies.Add(e);
-                enemycount--;
+                en--;
             }
         }
         while (m>0)
@@ -72,6 +84,7 @@ public class BoardManager : MonoBehaviour
 
      private void Update()
      {
+        
         if (Input.GetKeyDown(up) || Input.GetKeyDown(left) || Input.GetKeyDown(down) || Input.GetKeyDown(right))
         {
             Cell c = grid.GetGridObject(player.CurrentCell.x, player.CurrentCell.y);
@@ -101,6 +114,19 @@ public class BoardManager : MonoBehaviour
         }
      }
 
+
+    private IEnumerator ActUpdate()
+    {
+        while (timerBool)
+        {
+            tiempoTrans += Time.deltaTime;
+            tiempoCrono = TimeSpan.FromSeconds(tiempoTrans);
+            string tiempoCronoStr = tiempoCrono.ToString("mm':'ss':'fff");
+            Crono.text = tiempoCronoStr;
+
+            yield return null;
+        }
+    }
 
 
 }
