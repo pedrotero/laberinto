@@ -1,2 +1,2 @@
-# laberinto
- laberinto de gallomposting
+# laberinto con pathfinding A*
+Anteproyecto Fund. de Comp. Gráfica
