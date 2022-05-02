@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -8,42 +9,64 @@ public class StartButton : MonoBehaviour
 {
     public Text timeR;
     public Text LvR;
+    public Text nText;
+    public Text mText;
     public int n;
     public int m;
+    public TimeSpan time;
     // Start is called before the first frame update
     void Start()
     {
-        if (!PlayerPrefs.HasKey("Lvl"))
+        if (!PlayerPrefs.HasKey("TimeR"))
         {
             PlayerPrefs.SetFloat("TimeR", 0);
-            PlayerPrefs.SetFloat("LvR", 0);
+            PlayerPrefs.SetInt("LvR", 1);
         }
-        PlayerPrefs.SetInt("Lvl", 0);
+
+
         PlayerPrefs.GetFloat("TimeR");
-        LvR.text = "Best Lv:" + PlayerPrefs.GetFloat("LvR");
-        timeR.text = "Best Time:" + PlayerPrefs.GetFloat("TimeR").ToString("mm':'ss':'fff");
+        float lr = PlayerPrefs.GetInt("LvR");
+        LvR.text = "Best Lv: " + lr;
+        float tr = PlayerPrefs.GetFloat("TimeR");
+        time = TimeSpan.FromSeconds(tr);
+        timeR.text = "Best Time:" + time.ToString("mm':'ss':'fff");
     }
 
-    // Update is called once per frame
+
     void Update()
     {
-        
+
     }
 
-    public void changeN(int n)
+    public void changeN(float n)
     {
-        this.n = n;
+        this.n = (int)n;
+        nText.text = "n: " + n;
     }
 
-    public void changeM(int m)
+    public void changeM(float m)
     {
-        this.m = m;
+        this.m = (int)m;
+        mText.text = "m: " + m;
     }
     public void StartGame()
     {
-        PlayerPrefs.SetInt("n",n);
+        PlayerPrefs.SetFloat("time", 0);
+        PlayerPrefs.SetInt("n", n);
         PlayerPrefs.SetInt("m", m);
-        PlayerPrefs.SetInt("en", 1);
+        PlayerPrefs.SetInt("Lvl", 1);
         SceneManager.LoadScene("Game");
+    }
+
+    public void RestartProgress()
+    {
+        PlayerPrefs.SetFloat("TimeR", 0);
+        PlayerPrefs.SetInt("LvR", 1);
+        PlayerPrefs.GetFloat("TimeR");
+        float lr = PlayerPrefs.GetInt("LvR");
+        LvR.text = "Best Lv: " + lr;
+        float tr = PlayerPrefs.GetFloat("TimeR");
+        time = TimeSpan.FromSeconds(tr);
+        timeR.text = "Best Time:" + time.ToString("mm':'ss':'fff");
     }
 }

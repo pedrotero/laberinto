@@ -22,24 +22,31 @@ public class BoardManager : MonoBehaviour
     public int m;
     public PathManager pf;
     public List<Enemy> enemies = new List<Enemy>();
-    public int enemycount;
     private bool timerBool;
     public float tiempoTrans;
     private TimeSpan tiempoCrono;
     public Text Crono;
+    public int lv;
+    public Text level;
+    public Camera cam;
 
     private void Awake()
     {
         Instance = this;
-        //n = PlayerPrefs.GetInt("n");
-        //m = PlayerPrefs.GetInt("m");
-        
+        n = PlayerPrefs.GetInt("n");
+        m = PlayerPrefs.GetInt("m");
+        lv = PlayerPrefs.GetInt("Lvl");
+        level.text = "Level: " + lv;
+        timerBool = true;
+        tiempoTrans = PlayerPrefs.GetFloat("time");
+        StartCoroutine(ActUpdate());
+        cam.orthographicSize = 2 + (n - 3) / 2;
     }
 
     private void Start()
     {
         //Crono.text = "tiempo 00:00:00";
-        grid = new Grid(10, 10, 1, CellPrefab);
+        grid = new Grid(n, n, 1, CellPrefab);
 
         player = Instantiate(PlayerPrefab, new Vector2(0, 0), Quaternion.identity);
         player.ChangeCell(grid.GetGridObject(Random.Range(0, n), Random.Range(0, n)));
@@ -50,12 +57,10 @@ public class BoardManager : MonoBehaviour
             grid.endCell = grid.GetGridObject(Random.Range(0, n), Random.Range(0, n));
         }
         grid.endCell.SetColor(Color.yellow);
-        int en = enemycount;
+        int en = lv;
         while (en > 0)
         {
             Cell c = grid.GetGridObject(Random.Range(0, n), Random.Range(0, n));
-            Debug.Log("Hello World");
-
             if (grid.IsEmpty(c.x, c.y))
             {
                 Enemy e = Instantiate(EnemyPrefab, new Vector3(n, n, -1), Quaternion.identity);
@@ -84,7 +89,7 @@ public class BoardManager : MonoBehaviour
 
      private void Update()
      {
-        
+
         if (Input.GetKeyDown(up) || Input.GetKeyDown(left) || Input.GetKeyDown(down) || Input.GetKeyDown(right))
         {
             Cell c = grid.GetGridObject(player.CurrentCell.x, player.CurrentCell.y);

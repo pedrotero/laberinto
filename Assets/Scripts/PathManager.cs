@@ -51,7 +51,6 @@ public class PathManager : MonoBehaviour
             if (currentNode == endCell)
             {
                 // Reached final node
-                Debug.Log("Reach the end");
                 return CalculatePath(endCell);
             }
 
@@ -83,7 +82,6 @@ public class PathManager : MonoBehaviour
                 //PathfindingDebugStepVisual.Instance.TakeSnapshot(grid, currentNode, openList, closedList);
             }
         }
-        Debug.Log("Did not reach the end");
         return null;
     }
 

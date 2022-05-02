@@ -15,7 +15,7 @@ public class Grid : ScriptableObject
     public Cell startCell;
     public Cell endCell;
 
-
+    #pragma warning disable CA2200
     public Grid(int width, int height, int cellSize, Cell cellPrefab)
     {
         

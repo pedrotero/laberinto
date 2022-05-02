@@ -15,6 +15,11 @@ public class Player : MonoBehaviour
     {
 
     }
+
+    public void Update()
+    {
+        
+    }
     public void ChangeCell(Cell c)
     {
         
@@ -28,25 +33,47 @@ public class Player : MonoBehaviour
         {
             int lr = PlayerPrefs.GetInt("LvR");
             int l = PlayerPrefs.GetInt("Lvl");
-            BoardManager.Instance.enemycount++;
-            PlayerPrefs.SetInt("en", BoardManager.Instance.enemycount);
             float tr = PlayerPrefs.GetFloat("TimeR");
-            if (BoardManager.Instance.tiempoTrans <= tr && lr < l)
+            PlayerPrefs.SetFloat("time", BoardManager.Instance.tiempoTrans);
+            if (lr<l)
             {
-                PlayerPrefs.SetFloat("TimeR", BoardManager.Instance.tiempoTrans);
+                PlayerPrefs.SetInt("LvR",l);
             }
+            Debug.Log("tr:"+tr);
+            Debug.Log("t:"+ BoardManager.Instance.tiempoTrans);
+            Debug.Log("level"+ l);
 
-            PlayerPrefs.SetInt("Lvl", l + 1);
-            SceneManager.LoadScene("Game");
-        }
-        foreach (Enemy e in BoardManager.Instance.enemies)
-        {
-            if (CurrentCell == e.CurrentCell)
+
+            if (l<5)
             {
-                Debug.Log("Perdió");
-                break;
+                PlayerPrefs.SetInt("Lvl", l + 1);
+                if (((BoardManager.Instance.tiempoTrans < tr && lr <= l)|| lr < l) && tr!=0)
+                {
+                    PlayerPrefs.SetFloat("TimeR", BoardManager.Instance.tiempoTrans);
+
+                }
+                if (tr==0 && lr <=l)
+                {
+                    PlayerPrefs.SetFloat("TimeR", BoardManager.Instance.tiempoTrans);
+                }
+                SceneManager.LoadScene("Game");
             }
+            else
+            {
+                if (tr!=0 && (tr > BoardManager.Instance.tiempoTrans || lr <= l))
+                {
+                    PlayerPrefs.SetFloat("TimeR", BoardManager.Instance.tiempoTrans);
+                }
+                if (tr==0)
+                {
+                    PlayerPrefs.SetFloat("TimeR", BoardManager.Instance.tiempoTrans);
+                }
+                PlayerPrefs.SetInt("Win", 1);
+                SceneManager.LoadScene("EndScreen");
+            }
+            
         }
+        
 
 
 
